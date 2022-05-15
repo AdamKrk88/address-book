@@ -24,6 +24,14 @@ struct Uzytkownik {
 };
 
 
+void wyczyscCinZBledu () {
+    while (cin.fail()) {
+        cin.clear();
+        cin.ignore(100,'\n');
+    }
+}
+
+
 string usunSpacjeNaKoncu (string napis) {
     string napisPomocniczy ="";
     int liczbaSpacjiNaKoncu = 0;
@@ -137,6 +145,42 @@ int pobierzDaneZPlikuAdresaci(vector<Kontakt> &kontakty, vector<Uzytkownik> &uzy
     }
     return idOstatniegoAdresataZPlikuJakoInt;
 }
+
+
+void przepiszIAktualizujPlikZAdresatami (vector<Kontakt> kontakty, int idZmienianegoAdresata) {
+    fstream plikOryginalny;
+    fstream plikTymczasowy;
+    string liniaZPliku;
+    string nazwaPlikuOryginalnego = "Adresaci.txt.";
+    string nazwaPlikuTymczasowego = "AdresaciTymczasowy.txt";
+    int idAdresataZPlikuOryginalnego;
+    int indeksZmienianegoAdresata = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idZmienianegoAdresata);
+    plikOryginalny.open(nazwaPlikuOryginalnego.c_str(),ios::in);
+    plikTymczasowy.open(nazwaPlikuTymczasowego.c_str(),ios::out);
+    if (plikOryginalny.good() && plikTymczasowy.good()) {
+        while (getline(plikOryginalny,liniaZPliku)) {
+            idAdresataZPlikuOryginalnego = atoi(wydzielInformacjeZJednejLiniiPliku(liniaZPliku,1).c_str());
+            if (idAdresataZPlikuOryginalnego != idZmienianegoAdresata) {
+                plikTymczasowy << liniaZPliku << endl;
+            } else if ((idAdresataZPlikuOryginalnego == idZmienianegoAdresata) && (indeksZmienianegoAdresata >=0)) {
+                plikTymczasowy << kontakty[indeksZmienianegoAdresata].idKontaktu << "|";
+                plikTymczasowy << kontakty[indeksZmienianegoAdresata].idUzytkownika << "|";
+                plikTymczasowy << kontakty[indeksZmienianegoAdresata].imie << "|";
+                plikTymczasowy << kontakty[indeksZmienianegoAdresata].nazwisko << "|";
+                plikTymczasowy << kontakty[indeksZmienianegoAdresata].numerTelefonu << "|";
+                plikTymczasowy << kontakty[indeksZmienianegoAdresata].email << "|";
+                plikTymczasowy << kontakty[indeksZmienianegoAdresata].adres << "|";
+                plikTymczasowy << endl;
+            } else continue;
+        }
+        plikOryginalny.close();
+        plikTymczasowy.close();
+        remove(nazwaPlikuOryginalnego.c_str());
+        rename(nazwaPlikuTymczasowego.c_str(),nazwaPlikuOryginalnego.c_str());
+    }
+}
+
+
 
 
 void wyswietlImie (vector<Kontakt> &kontakty) {
@@ -262,7 +306,36 @@ void dodajPrzyjaciela(vector<Kontakt> &kontakty, int idUzytkownika, int idOstatn
 }
 
 
-void edytujKontakt (vector <Kontakt> &kontakty, int wybranaOpcja, int elementWektoraOdpowiadajacyKontaktowiDoEdycji) {
+void usunKontakt (vector<Kontakt> kontakty) {
+    string potwierdzenieUsuniecia;
+    int idKontaktu;
+    int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
+    system("cls");
+    cout << "Podaj ID osoby, ktora chcesz usunac z ksiazki adresowej: ";
+    cin >> idKontaktu;
+    if (cin.fail()) wyczyscCinZBledu ();
+    elementWektoraOdpowiadajacyKontaktowiDoEdycji = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idKontaktu);
+    if (elementWektoraOdpowiadajacyKontaktowiDoEdycji >=0) {
+        cout << "Czy na pewno chcesz usunac kontakt o id " << idKontaktu << "? Potwierdz wpisujac \"t\": ";
+        cin >> potwierdzenieUsuniecia;
+        if (potwierdzenieUsuniecia =="t") {
+            kontakty.erase(kontakty.begin() + elementWektoraOdpowiadajacyKontaktowiDoEdycji);
+            przepiszIAktualizujPlikZAdresatami(kontakty,idKontaktu);
+        } else {
+            cout << "Wpisz \"t\" jesli chcesz usunac. Kontakt nie zostal usuniety. Powrot do menu glownego";
+            Sleep(3000);
+        }
+    } else {
+        cout << "Nie ma takiego ID. Powrot do menu glownego";
+        Sleep(3000);
+    }
+}
+
+
+
+
+
+void zmienWybranePolePrzyEdycji (vector <Kontakt> &kontakty, int wybranaOpcja, int elementWektoraOdpowiadajacyKontaktowiDoEdycji) {
     string zmienianePole;
     cout << endl;
     switch (wybranaOpcja) {
@@ -300,6 +373,39 @@ void edytujKontakt (vector <Kontakt> &kontakty, int wybranaOpcja, int elementWek
 }
 
 
+void edytujKontakt (vector<Kontakt> kontakty) {
+    int idKontaktu;
+    int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
+    int wybranaOpcja;
+    system("cls");
+    cout << "Podaj ID kontaktu: ";
+    cin >> idKontaktu;
+    if (cin.fail()) wyczyscCinZBledu ();
+    elementWektoraOdpowiadajacyKontaktowiDoEdycji = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idKontaktu);
+    if (elementWektoraOdpowiadajacyKontaktowiDoEdycji >= 0) {
+        cout << endl;
+        cout << "Edycja danych dla osoby o id: " << idKontaktu <<endl;
+        cout << "Jest to: " << kontakty[elementWektoraOdpowiadajacyKontaktowiDoEdycji].imie << " ";
+        cout << kontakty[elementWektoraOdpowiadajacyKontaktowiDoEdycji].nazwisko << endl << endl;
+        cout << "1. Imie" << endl;
+        cout << "2. Nazwisko" << endl;
+        cout << "3. Numer telefonu" << endl;
+        cout << "4. Email" << endl;
+        cout << "5. Adres" << endl;
+        cout << "6. Powrot do menu" << endl;
+        cin >> wybranaOpcja;
+        wyczyscCinZBledu();
+        zmienWybranePolePrzyEdycji(kontakty,wybranaOpcja,elementWektoraOdpowiadajacyKontaktowiDoEdycji);
+        if (wybranaOpcja > 0 && wybranaOpcja < 6) przepiszIAktualizujPlikZAdresatami(kontakty,idKontaktu);
+    } else {
+        cout << "Takiego ID nie ma w ksiazce adresowej. Powrot do menu glownego";
+        Sleep(3000);
+    }
+
+
+}
+
+
 void aktualizujPlikZUzytkownikami (vector<Uzytkownik> &uzytkownicy) {
     int iloscZarejestrowanychUzytkownikow = uzytkownicy.size();
     fstream plikZUzytkownikami;
@@ -314,40 +420,6 @@ void aktualizujPlikZUzytkownikami (vector<Uzytkownik> &uzytkownicy) {
         plikZUzytkownikami.close();
     } else {
         cout << "Nie zaktualizowano pliku Uzytkownicy. Brak dostepu";
-    }
-}
-
-
-void przepiszIAktualizujPlikZAdresatami (vector<Kontakt> kontakty, int idZmienianegoAdresata) {
-    fstream plikOryginalny;
-    fstream plikTymczasowy;
-    string liniaZPliku;
-    string nazwaPlikuOryginalnego = "Adresaci.txt.";
-    string nazwaPlikuTymczasowego = "AdresaciTymczasowy.txt";
-    int idAdresataZPlikuOryginalnego;
-    int indeksZmienianegoAdresata = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idZmienianegoAdresata);
-    plikOryginalny.open(nazwaPlikuOryginalnego.c_str(),ios::in);
-    plikTymczasowy.open(nazwaPlikuTymczasowego.c_str(),ios::out);
-    if (plikOryginalny.good() && plikTymczasowy.good()) {
-        while (getline(plikOryginalny,liniaZPliku)) {
-            idAdresataZPlikuOryginalnego = atoi(wydzielInformacjeZJednejLiniiPliku(liniaZPliku,1).c_str());
-            if (idAdresataZPlikuOryginalnego != idZmienianegoAdresata) {
-                plikTymczasowy << liniaZPliku << endl;
-            } else if ((idAdresataZPlikuOryginalnego == idZmienianegoAdresata) && (indeksZmienianegoAdresata >=0)) {
-                plikTymczasowy << kontakty[indeksZmienianegoAdresata].idKontaktu << "|";
-                plikTymczasowy << kontakty[indeksZmienianegoAdresata].idUzytkownika << "|";
-                plikTymczasowy << kontakty[indeksZmienianegoAdresata].imie << "|";
-                plikTymczasowy << kontakty[indeksZmienianegoAdresata].nazwisko << "|";
-                plikTymczasowy << kontakty[indeksZmienianegoAdresata].numerTelefonu << "|";
-                plikTymczasowy << kontakty[indeksZmienianegoAdresata].email << "|";
-                plikTymczasowy << kontakty[indeksZmienianegoAdresata].adres << "|";
-                plikTymczasowy << endl;
-            } else continue;
-        }
-        plikOryginalny.close();
-        plikTymczasowy.close();
-        remove(nazwaPlikuOryginalnego.c_str());
-        rename(nazwaPlikuTymczasowego.c_str(),nazwaPlikuOryginalnego.c_str());
     }
 }
 
@@ -484,12 +556,7 @@ void pobierzDaneZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy) {
 }
 
 
-void wyczyscCinZBledu () {
-    while (cin.fail()) {
-        cin.clear();
-        cin.ignore(100,'\n');
-    }
-}
+
 
 
 
@@ -544,54 +611,9 @@ int main() {
                     system("cls");
                     wyswietlWszyscy(kontakty);
                 } else if (wybranaOpcja == 5) {
-                    string potwierdzenieUsuniecia;
-                    int idKontaktu;
-                    int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
-                    system("cls");
-                    cout << "Podaj ID osoby, ktora chcesz usunac z ksiazki adresowej: ";
-                    cin >> idKontaktu;
-                    if (cin.fail()) wyczyscCinZBledu ();
-                    elementWektoraOdpowiadajacyKontaktowiDoEdycji = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idKontaktu);
-                    if (elementWektoraOdpowiadajacyKontaktowiDoEdycji >=0) {
-                        cout << "Czy na pewno chcesz usunac kontakt o id " << idKontaktu << "? Potwierdz wpisujac \"t\": ";
-                        cin >> potwierdzenieUsuniecia;
-                        if (potwierdzenieUsuniecia =="t") {
-                            kontakty.erase(kontakty.begin() + elementWektoraOdpowiadajacyKontaktowiDoEdycji);
-                            przepiszIAktualizujPlikZAdresatami(kontakty,idKontaktu);
-                        } else {
-                            cout << "Wpisz \"t\" jesli chcesz usunac. Kontakt nie zostal usuniety. Powrot do menu glownego";
-                            Sleep(3000);
-                        }
-                    } else {
-                        cout << "Nie ma takiego ID. Powrot do menu glownego";
-                        Sleep(3000);
-                    }
+                    usunKontakt(kontakty);
                 } else if (wybranaOpcja == 6) {
-                    int idKontaktu;
-                    int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
-                    system("cls");
-                    cout << "Podaj ID kontaktu: ";
-                    cin >> idKontaktu;
-                    if (cin.fail()) wyczyscCinZBledu ();
-                    elementWektoraOdpowiadajacyKontaktowiDoEdycji = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idKontaktu);
-                    if (elementWektoraOdpowiadajacyKontaktowiDoEdycji >= 0) {
-                        cout << endl;
-                        cout << "Edycja danych dla osoby o id: " << idKontaktu <<endl;
-                        cout << "Jest to: " << kontakty[elementWektoraOdpowiadajacyKontaktowiDoEdycji].imie << " ";
-                        cout << kontakty[elementWektoraOdpowiadajacyKontaktowiDoEdycji].nazwisko << endl << endl;
-                        cout << "1. Imie" << endl;
-                        cout << "2. Nazwisko" << endl;
-                        cout << "3. Numer telefonu" << endl;
-                        cout << "4. Email" << endl;
-                        cout << "5. Adres" << endl;
-                        cout << "6. Powrot do menu" << endl;
-                        cin >> wybranaOpcja;
-                        edytujKontakt(kontakty,wybranaOpcja,elementWektoraOdpowiadajacyKontaktowiDoEdycji);
-                        if (wybranaOpcja > 0 && wybranaOpcja < 6) przepiszIAktualizujPlikZAdresatami(kontakty,idKontaktu);
-                    } else {
-                        cout << "Takiego ID nie ma w ksiazce adresowej. Powrot do menu glownego";
-                        Sleep(3000);
-                    }
+                    edytujKontakt(kontakty);
                 } else if (wybranaOpcja == 7) {
                     zmienHasloUzytkownika(uzytkownicy,idZalogowanegoUzytkownika);
                     aktualizujPlikZUzytkownikami(uzytkownicy);
