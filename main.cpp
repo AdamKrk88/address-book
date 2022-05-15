@@ -568,6 +568,7 @@ int main() {
     int idZalogowanegoUzytkownika = -1;
     int wybranaOpcja = 0;
     int idOstatniegoAdresataZPlikuJakoInt;
+
     while(idZalogowanegoUzytkownika == -1) {
         if (wybranaOpcja != 0) system("cls");
         cout << "Ksiazka adresowa. Wybierz jedna opcje podajac jej numer" << endl;
@@ -579,10 +580,12 @@ int main() {
         cout << "Twoj wybor to: ";
         cin >> wybranaOpcja;
         wyczyscCinZBledu();
+
         switch (wybranaOpcja) {
         case 1:
             idZalogowanegoUzytkownika = zalogujUzytkownika(uzytkownicy);
             if (idZalogowanegoUzytkownika > 0) idOstatniegoAdresataZPlikuJakoInt = pobierzDaneZPlikuAdresaci(kontakty,uzytkownicy,idZalogowanegoUzytkownika);
+
             while(idZalogowanegoUzytkownika > 0) {
                 system("cls");
                 cout << "1. Dodaj adresata" << endl;
@@ -597,33 +600,50 @@ int main() {
                 cout << "Twoj wybor: ";
                 cin >> wybranaOpcja;
                 if (cin.fail()) wyczyscCinZBledu ();
-                if (wybranaOpcja == 1) {
-                    system("cls");
 
+                switch (wybranaOpcja) {
+                case 1:
+                    system("cls");
                     dodajPrzyjaciela(kontakty, idZalogowanegoUzytkownika, idOstatniegoAdresataZPlikuJakoInt);
                     idOstatniegoAdresataZPlikuJakoInt++;
-                } else if (wybranaOpcja == 2) {
+                    break;
+
+                case 2:
                     system("cls");
                     wyswietlImie(kontakty);
-                } else if (wybranaOpcja == 3) {
+                    break;
+
+                case 3:
                     system("cls");
                     wyswietlNazwisko(kontakty);
-                } else if (wybranaOpcja == 4) {
+                    break;
+
+                case 4:
                     system("cls");
                     wyswietlWszyscy(kontakty);
-                } else if (wybranaOpcja == 5) {
+                    break;
+
+                case 5:
                     usunKontakt(kontakty);
-                } else if (wybranaOpcja == 6) {
+                    break;
+
+                case 6:
                     edytujKontakt(kontakty);
-                } else if (wybranaOpcja == 7) {
+                    break;
+
+                case 7:
                     zmienHasloUzytkownika(uzytkownicy,idZalogowanegoUzytkownika);
                     aktualizujPlikZUzytkownikami(uzytkownicy);
-                } else if (wybranaOpcja == 8) {
-                    wylogujUzytkownika(idZalogowanegoUzytkownika,kontakty);
+                    break;
 
-                } else {
+                case 8:
+                    wylogujUzytkownika(idZalogowanegoUzytkownika,kontakty);
+                    break;
+
+                default:
                     cout << "Taka opcja jest niedostepna. Sprobuj jeszcze raz. Podaj numer" << endl << endl;
                     wybranaOpcja = 0;
+                    break;
                 }
             }
             break;
@@ -641,7 +661,6 @@ int main() {
             cout << "Wybierz jedna z dostepnych opcji" << endl << endl;
             Sleep(3000);
             break;
-
         }
     }
 }
