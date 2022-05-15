@@ -306,7 +306,7 @@ void dodajPrzyjaciela(vector<Kontakt> &kontakty, int idUzytkownika, int idOstatn
 }
 
 
-void usunKontakt (vector<Kontakt> kontakty) {
+void usunKontakt (vector<Kontakt> &kontakty) {
     string potwierdzenieUsuniecia;
     int idKontaktu;
     int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
@@ -373,7 +373,7 @@ void zmienWybranePolePrzyEdycji (vector <Kontakt> &kontakty, int wybranaOpcja, i
 }
 
 
-void edytujKontakt (vector<Kontakt> kontakty) {
+void edytujKontakt (vector<Kontakt> &kontakty) {
     int idKontaktu;
     int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
     int wybranaOpcja;
