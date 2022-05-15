@@ -36,13 +36,16 @@ string usunSpacjeNaKoncu (string napis) {
     string napisPomocniczy ="";
     int liczbaSpacjiNaKoncu = 0;
     int i = napis.length() - 1;
+
     while (napis[i] == 32) {
         liczbaSpacjiNaKoncu++;
         i--;
     }
+
     for (int j = 0; j < napis.length() - liczbaSpacjiNaKoncu; j++) {
         napisPomocniczy = napisPomocniczy + napis[j];
     }
+
     return napisPomocniczy;
 }
 
@@ -51,6 +54,7 @@ int zwrocIndeksdlaPodanegoIdUzytkownika (vector <Uzytkownik> &uzytkownicy, int i
     for (int i = 0; i < uzytkownicy.size(); i++) {
         if (uzytkownicy[i].id == idUzytkownika) return i;
     }
+
     return -1;
 }
 
@@ -59,6 +63,7 @@ int zwrocIndeksdlaPodanegoIdKontaktu (vector <Kontakt> &kontakty, int id) {
     for (int i = 0; i < kontakty.size(); i++) {
         if (kontakty[i].idKontaktu == id) return i;
     }
+
     return -1;
 }
 
@@ -68,6 +73,7 @@ string wydzielInformacjeZJednejLiniiPliku (string liniaZPliku, int numerElementu
     int dlugoscLiniiZPliku;
     int dlugoscWydzielonejCzesciNapisu;
     size_t pozycjaPowtarzajacegoSieElementu;
+
     for (int i = 0; i < numerElementuZeStringa; i++) {
         dlugoscLiniiZPliku = liniaZPliku.length();
         pozycjaPowtarzajacegoSieElementu = liniaZPliku.find("|");
@@ -76,6 +82,7 @@ string wydzielInformacjeZJednejLiniiPliku (string liniaZPliku, int numerElementu
 
         if (dlugoscWydzielonejCzesciNapisu + 1 < dlugoscLiniiZPliku) liniaZPliku = liniaZPliku.substr(pozycjaPowtarzajacegoSieElementu+1);
     }
+
     return wydzielonaCzescNapisu;
 }
 
@@ -103,6 +110,7 @@ int pobierzDaneZPlikuAdresaci(vector<Kontakt> &kontakty, vector<Uzytkownik> &uzy
     int idOstatniegoAdresataZPlikuJakoInt = 0;
     int numerKontaktu = 0;
     bazaDanych.open("Adresaci.txt",ios::in);
+
     if (bazaDanych.good()) {
         while (getline(bazaDanych,liniaZPliku) && idUzytkownika > 0) {
             idUzytkownikaWPlikuJakoString = wydzielInformacjeZJednejLiniiPliku(liniaZPliku,2);
@@ -135,14 +143,8 @@ int pobierzDaneZPlikuAdresaci(vector<Kontakt> &kontakty, vector<Uzytkownik> &uzy
             }
         }
         bazaDanych.close();
-    } else {
-        int indeksUzytkownika = zwrocIndeksdlaPodanegoIdUzytkownika(uzytkownicy, idUzytkownika);
-        cout << endl;
-        cout << "Brak dostepu do pliku Adresaci lub plik nie istnieje" << endl;
-        cout << "Nacisnij enter aby przejsc do ksiazki adresowej Uzytkownika: " << uzytkownicy[indeksUzytkownika].nazwa << endl;
-        getchar();
-        getchar();
     }
+
     return idOstatniegoAdresataZPlikuJakoInt;
 }
 
@@ -157,6 +159,7 @@ void przepiszIAktualizujPlikZAdresatami (vector<Kontakt> kontakty, int idZmienia
     int indeksZmienianegoAdresata = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idZmienianegoAdresata);
     plikOryginalny.open(nazwaPlikuOryginalnego.c_str(),ios::in);
     plikTymczasowy.open(nazwaPlikuTymczasowego.c_str(),ios::out);
+
     if (plikOryginalny.good() && plikTymczasowy.good()) {
         while (getline(plikOryginalny,liniaZPliku)) {
             idAdresataZPlikuOryginalnego = atoi(wydzielInformacjeZJednejLiniiPliku(liniaZPliku,1).c_str());
@@ -181,8 +184,6 @@ void przepiszIAktualizujPlikZAdresatami (vector<Kontakt> kontakty, int idZmienia
 }
 
 
-
-
 void wyswietlImie (vector<Kontakt> &kontakty) {
     int liczbaKontakow = kontakty.size();
     string imie;
@@ -192,6 +193,7 @@ void wyswietlImie (vector<Kontakt> &kontakty) {
     transform(imie.begin(),imie.end(),imie.begin(),::tolower);
     string imieZKsiazkiMale = "";
     int liczbaOsobODanymImieniu = 0;
+
     for (int i = 0; i < liczbaKontakow; i++) {
         imieZKsiazkiMale = kontakty[i].imie;
         transform(imieZKsiazkiMale.begin(),imieZKsiazkiMale.end(),imieZKsiazkiMale.begin(),::tolower);
@@ -205,6 +207,7 @@ void wyswietlImie (vector<Kontakt> &kontakty) {
             liczbaOsobODanymImieniu ++;
         }
     }
+
     if (liczbaOsobODanymImieniu == 0) cout << "Brak osob o tym imieniu";
     cout << endl;
     cout << "Nacisnij enter, aby powrocic do menu glownego" << endl;
@@ -222,6 +225,7 @@ void wyswietlNazwisko (vector<Kontakt> &kontakty) {
     transform(nazwisko.begin(),nazwisko.end(),nazwisko.begin(),::tolower);
     string nazwiskoZKsiazkiMale = "";
     int liczbaOsobODanymNazwisku = 0;
+
     for (int i = 0; i < liczbaKontakow; i++) {
         nazwiskoZKsiazkiMale = kontakty[i].nazwisko;
         transform(nazwiskoZKsiazkiMale.begin(),nazwiskoZKsiazkiMale.end(),nazwiskoZKsiazkiMale.begin(),::tolower);
@@ -235,6 +239,7 @@ void wyswietlNazwisko (vector<Kontakt> &kontakty) {
             liczbaOsobODanymNazwisku ++;
         }
     }
+
     if (liczbaOsobODanymNazwisku == 0) cout << "Brak osob o tym nazwisku";
     cout << endl;
     cout << "Nacisnij enter, aby powrocic do menu glownego" << endl;
@@ -245,6 +250,7 @@ void wyswietlNazwisko (vector<Kontakt> &kontakty) {
 
 void wyswietlWszyscy (vector<Kontakt> &kontakty) {
     int liczbaKontakow = kontakty.size();
+
     for (int i = 0; i < liczbaKontakow; i++) {
         cout << "ID osoby: " << kontakty[i].idKontaktu << endl;
         cout << kontakty[i].imie << " " << kontakty[i].nazwisko << endl;
@@ -253,6 +259,7 @@ void wyswietlWszyscy (vector<Kontakt> &kontakty) {
         cout << "Adres: " << kontakty[i].adres << endl;
         cout << "***********************************************************" << endl;
     }
+
     if (liczbaKontakow == 0) cout << "Twoja ksiazka adresowa jest pusta";
     cout << endl;
     cout << "Nacisnij enter aby powrocic do menu glownego" << endl;
@@ -264,8 +271,10 @@ void wyswietlWszyscy (vector<Kontakt> &kontakty) {
 void dodajPrzyjaciela(vector<Kontakt> &kontakty, int idUzytkownika, int idOstatniegoAdresataZPlikuJakoInt) {
     int liczbaKontaktowDanegoUzytkownika = kontakty.size();
     int dostepneID;
+
     if (idOstatniegoAdresataZPlikuJakoInt == 0) dostepneID = 1;
     else dostepneID = idOstatniegoAdresataZPlikuJakoInt + 1;
+
     kontakty.push_back(Kontakt ());
     kontakty[liczbaKontaktowDanegoUzytkownika].idKontaktu = dostepneID;
     kontakty[liczbaKontaktowDanegoUzytkownika].idUzytkownika = idUzytkownika;
@@ -289,6 +298,7 @@ void dodajPrzyjaciela(vector<Kontakt> &kontakty, int idUzytkownika, int idOstatn
 
     fstream bazaDanych;
     bazaDanych.open("Adresaci.txt",ios::out | ios::app);
+
     if (bazaDanych.good()) {
         bazaDanych << kontakty[liczbaKontaktowDanegoUzytkownika].idKontaktu << "|";
         bazaDanych << kontakty[liczbaKontaktowDanegoUzytkownika].idUzytkownika << "|";
@@ -301,43 +311,72 @@ void dodajPrzyjaciela(vector<Kontakt> &kontakty, int idUzytkownika, int idOstatn
         bazaDanych.close();
     } else {
         cout << "Zapis do pliku sie nie powiodl. Brak dostepu" << endl;
-        Sleep(3000);
+        Sleep(1000);
     }
 }
 
 
-void usunKontakt (vector<Kontakt> &kontakty) {
+bool usunKontakt (vector<Kontakt> &kontakty, int idOstatniegoAdresataZPlikuJakoInt) {
     string potwierdzenieUsuniecia;
     int idKontaktu;
     int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
+    bool czyOstatniKontaktZPlikuZostalUsuniety = false;
+
     system("cls");
     cout << "Podaj ID osoby, ktora chcesz usunac z ksiazki adresowej: ";
     cin >> idKontaktu;
+
     if (cin.fail()) wyczyscCinZBledu ();
     elementWektoraOdpowiadajacyKontaktowiDoEdycji = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idKontaktu);
+
     if (elementWektoraOdpowiadajacyKontaktowiDoEdycji >=0) {
         cout << "Czy na pewno chcesz usunac kontakt o id " << idKontaktu << "? Potwierdz wpisujac \"t\": ";
         cin >> potwierdzenieUsuniecia;
         if (potwierdzenieUsuniecia =="t") {
             kontakty.erase(kontakty.begin() + elementWektoraOdpowiadajacyKontaktowiDoEdycji);
             przepiszIAktualizujPlikZAdresatami(kontakty,idKontaktu);
+            if (idOstatniegoAdresataZPlikuJakoInt == idKontaktu) czyOstatniKontaktZPlikuZostalUsuniety = true;
         } else {
             cout << "Wpisz \"t\" jesli chcesz usunac. Kontakt nie zostal usuniety. Powrot do menu glownego";
-            Sleep(3000);
+            Sleep(1000);
         }
     } else {
         cout << "Nie ma takiego ID. Powrot do menu glownego";
-        Sleep(3000);
+        Sleep(1000);
     }
+
+    return czyOstatniKontaktZPlikuZostalUsuniety;
 }
 
 
+int aktualizacjaIdOstatnegoAdresataZPliku () {
+    fstream bazaDanych;
+    string liniaZPliku;
+    string idOstatniegoAdresataZPlikuJakoString;
+    int idOstatniegoAdresataZPlikuJakoInt = 0;
+    bazaDanych.open("Adresaci.txt",ios::in);
 
+    if(bazaDanych.good()) {
+        while(getline(bazaDanych,liniaZPliku)) {
+            idOstatniegoAdresataZPlikuJakoString = wydzielInformacjeZJednejLiniiPliku(liniaZPliku,1);
+            idOstatniegoAdresataZPlikuJakoInt = atoi(idOstatniegoAdresataZPlikuJakoString.c_str());
+        }
+        bazaDanych.close();
+    } else {
+        cout << "! Nie wykonano potrzebnej aktualizacji !" << endl;
+        cout << "ID zostanie blednie przypisanie przy probie wprowadzenia nowego adresata" << endl;
+        cout << "Zamknij program i uruchom jeszcze raz" << endl;
+        Sleep(3000);
+    }
+
+    return idOstatniegoAdresataZPlikuJakoInt;
+}
 
 
 void zmienWybranePolePrzyEdycji (vector <Kontakt> &kontakty, int wybranaOpcja, int elementWektoraOdpowiadajacyKontaktowiDoEdycji) {
     string zmienianePole;
     cout << endl;
+
     switch (wybranaOpcja) {
     case 1:
         cout << "Podaj nowe imie: ";
@@ -367,7 +406,7 @@ void zmienWybranePolePrzyEdycji (vector <Kontakt> &kontakty, int wybranaOpcja, i
         break;
     case 6:
         cout << "Powrot do menu";
-        Sleep(3000);
+        Sleep(1000);
         break;
     }
 }
@@ -377,11 +416,14 @@ void edytujKontakt (vector<Kontakt> &kontakty) {
     int idKontaktu;
     int elementWektoraOdpowiadajacyKontaktowiDoEdycji;
     int wybranaOpcja;
+
     system("cls");
     cout << "Podaj ID kontaktu: ";
     cin >> idKontaktu;
+
     if (cin.fail()) wyczyscCinZBledu ();
     elementWektoraOdpowiadajacyKontaktowiDoEdycji = zwrocIndeksdlaPodanegoIdKontaktu(kontakty,idKontaktu);
+
     if (elementWektoraOdpowiadajacyKontaktowiDoEdycji >= 0) {
         cout << endl;
         cout << "Edycja danych dla osoby o id: " << idKontaktu <<endl;
@@ -399,10 +441,8 @@ void edytujKontakt (vector<Kontakt> &kontakty) {
         if (wybranaOpcja > 0 && wybranaOpcja < 6) przepiszIAktualizujPlikZAdresatami(kontakty,idKontaktu);
     } else {
         cout << "Takiego ID nie ma w ksiazce adresowej. Powrot do menu glownego";
-        Sleep(3000);
+        Sleep(1000);
     }
-
-
 }
 
 
@@ -410,6 +450,7 @@ void aktualizujPlikZUzytkownikami (vector<Uzytkownik> &uzytkownicy) {
     int iloscZarejestrowanychUzytkownikow = uzytkownicy.size();
     fstream plikZUzytkownikami;
     plikZUzytkownikami.open("Uzytkownicy.txt",ios::out);
+
     if (plikZUzytkownikami.good()) {
         for (int i = 0; i < iloscZarejestrowanychUzytkownikow; i++) {
             plikZUzytkownikami << uzytkownicy[i].id << "|";
@@ -430,10 +471,12 @@ void zarejestrujUzytkownika (vector<Uzytkownik> &uzytkownicy) {
     int liczbaUzytkownikow = uzytkownicy.size();
     int liczbaSprawdzonychUzytkownikow = 0;
     uzytkownicy.push_back(Uzytkownik());
+
     cout << "Podaj nazwe uzytkownika: ";
     cin.sync();
     getline(cin,nazwa);
     nazwa = usunSpacjeNaKoncu(nazwa);
+
     while (liczbaSprawdzonychUzytkownikow < liczbaUzytkownikow) {
         if (uzytkownicy[liczbaSprawdzonychUzytkownikow].nazwa == nazwa) {
             cout << "Taki uzytkownik juz istnieje. Sprobuj ponownie" << endl;
@@ -444,13 +487,16 @@ void zarejestrujUzytkownika (vector<Uzytkownik> &uzytkownicy) {
             liczbaSprawdzonychUzytkownikow = 0;
         } else liczbaSprawdzonychUzytkownikow++;
     }
+
     cout << "Podaj haslo: ";
     cin >> haslo;
     cout << "Uzytkownik " << nazwa << " zostal zarejestrowany";
+
     uzytkownicy[liczbaUzytkownikow].id = liczbaUzytkownikow + 1;
     uzytkownicy[liczbaUzytkownikow].nazwa = nazwa;
     uzytkownicy[liczbaUzytkownikow].haslo = haslo;
-    Sleep(3000);
+
+    Sleep(1000);
 }
 
 
@@ -462,15 +508,18 @@ int zalogujUzytkownika (vector<Uzytkownik> &uzytkownicy) {
     int liczbaProbWpisaniaHasla;
     int idZalogowanegoUzytkownika = -1;
     int pozycjaUzytkownikaWWektorze = -1;
+
     cout << "Podaj login uzytkownika: ";
     cin.sync();
     getline(cin,loginUzytkownika);
+
     for (int i = 0; i < iloscZarejestrowanychUzytkownikow; i++) {
         if (uzytkownicy[i].nazwa == loginUzytkownika) {
             pozycjaUzytkownikaWWektorze = i;
             break;
         }
     }
+
     if (pozycjaUzytkownikaWWektorze >= 0) {
         for (int j = 0; j < 3; j++) {
             cout << "Podaj haslo: ";
@@ -478,21 +527,22 @@ int zalogujUzytkownika (vector<Uzytkownik> &uzytkownicy) {
             if (uzytkownicy[pozycjaUzytkownikaWWektorze].haslo == haslo) {
                 cout << "Haslo poprawne. Uzytkownik " << uzytkownicy[pozycjaUzytkownikaWWektorze].nazwa << " zalogowany" << endl;
                 idZalogowanegoUzytkownika = uzytkownicy[pozycjaUzytkownikaWWektorze].id;
-                Sleep(3000);
+                Sleep(1000);
                 break;
             } else {
                 liczbaProbWpisaniaHasla = 2-j;
                 cout << "Haslo niepoprawne. Liczba prob: " << liczbaProbWpisaniaHasla << endl;
                 if (liczbaProbWpisaniaHasla == 0) {
                     cout << "Wszystkie proby bledne. Powrot do menu glownego" << endl;
-                    Sleep(3000);
+                    Sleep(1000);
                 }
             }
         }
     } else {
         cout << "Nie ma takiego uzytkownika" << endl;
-        Sleep(3000);
+        Sleep(1000);
     }
+
     return idZalogowanegoUzytkownika;
 }
 
@@ -511,7 +561,7 @@ void zmienHasloUzytkownika (vector<Uzytkownik> &uzytkownicy, int idZalogowanegoU
     cin >> noweHaslo;
     uzytkownicy[indeksZalogowanegoUzytkownikaWWektorze].haslo = noweHaslo;
     cout << "Haslo zmienione";
-    Sleep(3000);
+    Sleep(1000);
 }
 
 
@@ -522,6 +572,7 @@ void pobierzDaneZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy) {
     int numerKontaktu = 0;
     size_t pozycja;
     uzytkownicyZarejestrowani.open("Uzytkownicy.txt",ios::in);
+
     if (uzytkownicyZarejestrowani.good()) {
         while (getline(uzytkownicyZarejestrowani,liniaZPliku,'|') && liniaZPliku != "\n") {
             if (numerWskazujacyDaneKontaktu == 1) uzytkownicy.push_back(Uzytkownik ());
@@ -557,10 +608,6 @@ void pobierzDaneZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy) {
 
 
 
-
-
-
-
 int main() {
     vector <Kontakt> kontakty;
     vector <Uzytkownik> uzytkownicy;
@@ -568,6 +615,7 @@ int main() {
     int idZalogowanegoUzytkownika = -1;
     int wybranaOpcja = 0;
     int idOstatniegoAdresataZPlikuJakoInt;
+    bool czyOstatniKontaktZPlikuZostalUsuniety = false;
 
     while(idZalogowanegoUzytkownika == -1) {
         if (wybranaOpcja != 0) system("cls");
@@ -624,7 +672,8 @@ int main() {
                     break;
 
                 case 5:
-                    usunKontakt(kontakty);
+                    czyOstatniKontaktZPlikuZostalUsuniety = usunKontakt(kontakty, idOstatniegoAdresataZPlikuJakoInt);
+                    if (czyOstatniKontaktZPlikuZostalUsuniety == true) idOstatniegoAdresataZPlikuJakoInt = aktualizacjaIdOstatnegoAdresataZPliku();
                     break;
 
                 case 6:
@@ -659,7 +708,7 @@ int main() {
 
         default:
             cout << "Wybierz jedna z dostepnych opcji" << endl << endl;
-            Sleep(3000);
+            Sleep(1000);
             break;
         }
     }
