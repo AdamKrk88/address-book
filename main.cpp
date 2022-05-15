@@ -579,7 +579,8 @@ int main() {
         cout << "Twoj wybor to: ";
         cin >> wybranaOpcja;
         wyczyscCinZBledu();
-        if (wybranaOpcja == 1) {
+        switch (wybranaOpcja) {
+        case 1:
             idZalogowanegoUzytkownika = zalogujUzytkownika(uzytkownicy);
             if (idZalogowanegoUzytkownika > 0) idOstatniegoAdresataZPlikuJakoInt = pobierzDaneZPlikuAdresaci(kontakty,uzytkownicy,idZalogowanegoUzytkownika);
             while(idZalogowanegoUzytkownika > 0) {
@@ -625,13 +626,22 @@ int main() {
                     wybranaOpcja = 0;
                 }
             }
-        } else if (wybranaOpcja == 2) {
+            break;
+
+        case 2:
             zarejestrujUzytkownika(uzytkownicy);
             aktualizujPlikZUzytkownikami(uzytkownicy);
-        } else if (wybranaOpcja == 3) exit(0);
-        else {
+            break;
+
+        case 3:
+            exit(0);
+            break;
+
+        default:
             cout << "Wybierz jedna z dostepnych opcji" << endl << endl;
             Sleep(3000);
+            break;
+
         }
     }
 }
